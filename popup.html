@@ -3,19 +3,110 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="A Chrome extension popup displaying viewport size, type, and orientation">
-  <meta name="keywords" content="viewport, chrome extension, size, device type, orientation">
-  <title>ViewportSnap</title>
-  <link rel="stylesheet" href="popup.css">
+  <meta name="description" content="Control ViewportSnap extension">
+  <meta name="keywords" content="viewport, chrome extension">
+  <title>ViewportSnap Control</title>
+  <link rel="stylesheet" href="bootstrap-icons.css">
+  <style>
+    body {
+      width: 250px;
+      padding: 15px;
+      font-family: 'Arial', sans-serif;
+      background: #f5f6fa;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    #toggle {
+      width: 100%;
+      padding: 8px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: background 0.2s ease;
+    }
+
+    #toggle:hover {
+      background: #34495e;
+    }
+
+    .position-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      justify-items: center;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-btn {
+      width: 40px;
+      height: 40px;
+    }
+
+    .position-btn {
+      width: 40px;
+      height: 40px;
+      background: #ecf0f1;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .position-btn:hover {
+      background: #1abc9c;
+      color: white;
+    }
+
+    .position-btn.active {
+      background: #1abc9c;
+      color: white;
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #7f8c8d;
+      text-align: center;
+    }
+
+    a {
+      color: #1abc9c;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>ViewportSnap</h1>
-    <div id="viewport-type">Type: <span></span></div>
-    <div id="viewport-size">Size: <span></span></div>
-    <div id="orientation">Orientation: <span></span></div>
+  <h1 id="title">ViewportSnap</h1>
+  <button id="toggle">Disable</button>
+  <div class="position-selector">
+    <button class="position-btn" data-pos="top-left"><i class="bi bi-box-arrow-in-up-left"></i></button>
+    <button class="position-btn" data-pos="top-navbar"><i class="bi bi-window-fullscreen"></i></button>
+    <button class="position-btn" data-pos="top-right"><i class="bi bi-box-arrow-in-up-right"></i></button>
+    <button class="position-btn" data-pos="bottom-left"><i class="bi bi-box-arrow-in-down-left"></i></button>
+    <span class="empty-btn"></span>
+    <button class="position-btn" data-pos="bottom-right"><i class="bi bi-box-arrow-in-down-right"></i></button>
   </div>
+  <p>Created by <a href="https://github.com/jmeyo" target="_blank">jmeyo</a></p>
   <script src="popup.js"></script>
 </body>
 

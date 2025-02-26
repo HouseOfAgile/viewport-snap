@@ -1,64 +1,40 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if chrome.scripting is available
-  if (!chrome || !chrome.scripting) {
-    displayError('Scripting API not available. Please check extension permissions.');
-    return;
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggle');
+  const title = document.getElementById('title');
+  const positionBtns = document.querySelectorAll('.position-btn');
 
-  // Query the active tab
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    if (!tabs || tabs.length === 0) {
-      displayError('No active tab found.');
-      return;
-    }
+  chrome.storage.sync.get(['viewportSnapActive', 'viewportSnapPosition'], (result) => {
+    const isActive = result.viewportSnapActive !== false;
+    toggleBtn.textContent = isActive ? 'Disable' : 'Enable';
+    title.textContent = isActive ? 'ViewportSnap' : 'ViewportSnap (Disabled)';
+    const activePos = result.viewportSnapPosition || 'top-right';
+    positionBtns.forEach(btn => {
+      if (btn.dataset.pos === activePos) btn.classList.add('active');
+    });
+  });
 
-    const tabId = tabs[0].id;
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      function: getViewportInfo
-    }, (results) => {
-      if (chrome.runtime.lastError) {
-        displayError(`Execution error: ${chrome.runtime.lastError.message}`);
-        return;
-      }
+  toggleBtn.addEventListener('click', () => {
+    chrome.storage.sync.get(['viewportSnapActive'], (result) => {
+      const isActive = result.viewportSnapActive !== false;
+      const newState = !isActive;
+      chrome.storage.sync.set({ viewportSnapActive: newState });
+      toggleBtn.textContent = newState ? 'Disable' : 'Enable';
+      title.textContent = newState ? 'ViewportSnap' : 'ViewportSnap (Disabled)';
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { active: newState });
+      });
+    });
+  });
 
-      if (results && results[0] && results[0].result) {
-        const { width, height, deviceType, orientation } = results[0].result;
-        document.querySelector('#viewport-size span').textContent = `${width}x${height}px`;
-        document.querySelector('#viewport-type span').textContent = deviceType;
-        document.querySelector('#orientation span').textContent = orientation;
-      } else {
-        displayError('No valid results returned.');
-      }
+  positionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newPosition = btn.dataset.pos;
+      chrome.storage.sync.set({ viewportSnapPosition: newPosition });
+      positionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { position: newPosition });
+      });
     });
   });
 });
-
-function getViewportInfo() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  let deviceType = 'Desktop';
-  
-  if (width <= 480) {
-    deviceType = 'Mobile';
-  } else if (width <= 768) {
-    deviceType = 'Tablet';
-  }
-
-  const orientation = (window.innerWidth > window.innerHeight) ? 'Landscape' : 'Portrait';
-
-  return {
-    width: width,
-    height: height,
-    deviceType: deviceType,
-    orientation: orientation
-  };
-}
-
-// Helper function to display errors in the popup
-function displayError(message) {
-  const container = document.querySelector('.container');
-  if (container) {
-    container.innerHTML = `<p style="color: red;">Error: ${message}</p>`;
-  }
-}

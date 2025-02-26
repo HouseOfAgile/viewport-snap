@@ -2,10 +2,18 @@
   "manifest_version": 3,
   "name": "ViewportSnap",
   "version": "1.0",
-  "description": "Displays viewport type and size information",
+  "description": "Displays viewport type, size, and Bootstrap breakpoints in real-time. Created by github.com/jmeyo",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css", "bootstrap-icons.css"]
+    }
   ],
   "action": {
     "default_popup": "popup.html",
@@ -13,6 +21,15 @@
       "16": "icon16.png",
       "48": "icon48.png",
       "128": "icon128.png"
-    }
+    },
+    "default_title": "ViewportSnap Control"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }
