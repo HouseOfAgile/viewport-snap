@@ -1,0 +1,23 @@
+body {
+  width: 250px;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+#viewport-type, #viewport-size, #orientation {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+span {
+  font-weight: bold;
+}
